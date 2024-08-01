@@ -1,0 +1,15 @@
+version: '3.5'
+
+services:
+  web:
+    build: ./
+    image: media_server
+    ports:
+      - 25519:8000/tcp
+    init: true
+    healthcheck:
+      test: curl 'http://localhost:8000/'
+      interval: 10s
+      timeout: 1s
+      retries: 10
+      start_period: 5s

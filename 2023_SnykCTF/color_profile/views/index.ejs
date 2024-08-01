@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Color Profile</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5/dist/iro.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="card mt-5 mx-auto" style="width: 18rem;">
+        <span class="user-icon">👤</span>
+        <div class="card-body">
+            <h5 class="card-title"><b>John Doe</b></h5>
+            <p class="card-text"><b>Username:</b> johndoe</p>
+            <p class="card-text"><b>Email:</b> johndoe@example.com</p>
+            <div id="colorPicker" data-jscolor="{value:'<% profileColor %>'}"></div>
+            <p>Selected Color: <span id="selectedColor">None</span></p>
+            <button id="submitColor" class="btn btn-primary mt-2">Update Profile</button>
+
+        </div>
+    </div>
+</div>
+
+<script src="/scripts/client.js"></script>
+<script>
+    const initialColor = "<%= profileColor %>";
+    const invertedInitialColor = invertColor(initialColor);
+
+    $('body, .card').css('background-color', initialColor);
+    $('body, .card, .card-text, .card-title').css('color', invertedInitialColor);
+    $('#selectedColor').text(initialColor).css('color', invertedInitialColor);
+
+    var colorPicker = new iro.ColorPicker("#colorPicker", {
+        width: 200,
+        color: initialColor,
+    });
+
+    colorPicker.on("color:change", function(color) {
+        const hexColor = color.hexString;
+        const invertedColor = invertColor(hexColor);
+        
+        $('body, .card').css('background-color', hexColor);
+        $('body, .card, .card-text, .card-title').css('color', invertedColor);
+        $('#selectedColor').text(hexColor).css('color', invertedColor);
+    });
+
+</script>
+
+</body>
+</html>

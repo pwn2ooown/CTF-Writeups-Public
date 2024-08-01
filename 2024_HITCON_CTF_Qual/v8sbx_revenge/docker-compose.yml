@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  sbx:
+    build: ./
+    volumes:
+      - ./share:/home/ctf:ro
+    ports:
+      - "1338:1338"
+    expose:
+      - "1338"

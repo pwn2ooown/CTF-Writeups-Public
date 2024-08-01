@@ -1,0 +1,7 @@
+use zsteg to find out there's a zip file after image
+
+`head -c 48543 meow.png > orig.png` to extract original image.
+
+crc32 same as zip -> bkcrack.
+
+I use `bkcrack -C ttt.zip --cipher-index 4 -P key.zip -p orig.png` to get key and `pkcrack/bin/zipdecrypt f2a88f48 bcd2cae4 bd86e3f7 ttt.zip plain.zip` to unzip files.

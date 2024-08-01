@@ -1,0 +1,17 @@
+version: '3.7'
+services:
+  web:
+    build: .
+    image: gitly
+    init: true
+    ports:
+      - 8080:8080
+    volumes:
+      - ./flag:/flag:ro
+    healthcheck:
+      test: curl 'http://localhost:8080/admin/gitly/raw/master/README.md' | grep -q Gitly
+      interval: 10s
+      timeout: 1s
+      retries: 10
+      start_period: 5s
+    restart: always

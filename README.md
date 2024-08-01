@@ -1,5 +1,8 @@
-# CTF-Writeups-Public
-Yet another repository for ctf writeups
+# CTF Writeups
+
+Writeup and solve scripts. Mostly pwn.
+
+Some older writeups of mine were written long long ago so they may be awful.(?)
 
 ## License
 

@@ -1,0 +1,15 @@
+diff --git a/app.py b/app-fixed.py
+index acb0621..fabee70 100644
+--- a/app.py
++++ b/app-fixed.py
+@@ -7,8 +7,8 @@ app = Flask(__name__)
+ 
+ 
+ def run(code):
+-    os.setegid(65534)
+-    os.seteuid(65534)
++    os.setgid(65534)
++    os.setuid(65534)
+ 
+     import contextlib
+     import io

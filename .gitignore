@@ -1,0 +1,9 @@
+.gdb_history
+# Ignore IDA Pro databases
+*.i64
+*.idb
+*.id0
+*.id1
+*.id2
+*.id3
+*.id4

@@ -1,0 +1,16 @@
+POST /login HTTP/1.1
+Host: lotuxctf.com:20002
+Content-Length: 48
+Cache-Control: max-age=0
+Upgrade-Insecure-Requests: 1
+Origin: http://lotuxctf.com:20002
+Content-Type: application/x-www-form-urlencoded
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.138 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Referer: http://lotuxctf.com:20002/
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7
+Cookie: session=eyJ1c2VybmFtZSI6ImN1cmlvdXMifQ.ZFbN-A.wcoLxse1tTaMIZ5X_RdGTbWWLi0
+Connection: close
+
+username=a&password=b

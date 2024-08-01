@@ -1,0 +1,24 @@
+buf1
+0x080491eb
+buf1
+
+ebp = buf1
+
+0x080491eb
+buf1
+
+call read in main
+
+buf1
+
+push 0
+
+0
+buf1
+(below buf1 is some large value, actually it's address of argv[0])
+
+call read...leave ret = mov esp, ebp + pop ebp
+
+esp now = buf1, ebp = some garbage value
+
+

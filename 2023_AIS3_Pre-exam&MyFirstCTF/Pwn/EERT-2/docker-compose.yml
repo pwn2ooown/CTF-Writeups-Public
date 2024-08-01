@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  bof2win:
+    build: ./
+    volumes:
+      - ./share:/home/eert:ro
+      - ./xinetd:/etc/xinetd.d/eert:ro
+    ports:
+      - "31337:31337"

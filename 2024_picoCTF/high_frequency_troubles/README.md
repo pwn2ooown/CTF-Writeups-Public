@@ -1,0 +1,1 @@
+Writeup at my blog at [https://pwn2ooown.github.io/](https://pwn2ooown.github.io/)

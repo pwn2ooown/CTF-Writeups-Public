@@ -1,0 +1,5 @@
+Copy 0x404040 out and xor with 0x87
+
+https://gchq.github.io/CyberChef/#recipe=Find_/_Replace(%7B'option':'Extended%20(%5C%5Cn,%20%5C%5Ct,%20%5C%5Cx...)','string':'%5C%5Cr'%7D,'',true,false,true,false)From_Hex('Auto')XOR(%7B'option':'Hex','string':'0x87'%7D,'Standard',false)&input=MHhDMQ0KMHhDQg0KMHhDNg0KMHhDMA0KMHhGQw0KMHhDOQ0KMHhFOA0KMHhBQg0KMHhBNw0KMHhERQ0KMHhFOA0KMHhGMg0KMHhBNw0KMHhGNA0KMHhFRg0KMHhFOA0KMHhGMg0KMHhFQg0KMHhFMw0KMHhBNw0KMHhFOQ0KMHhFOA0KMHhGMw0KMHhBNw0KMHhGNw0KMHhFNg0KMHhGNA0KMHhGNA0KMHhBNw0KMHhGMw0KMHhFRg0KMHhFMg0KMHhBNw0KMHhFMQ0KMHhFQg0KMHhFNg0KMHhFMA0KMHhGQQ
+
+FLAG{???}

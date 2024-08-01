@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  pwn-skewer_shop:
+    build: ./
+    volumes:
+      - ./share:/home/chal:ro
+      - ./xinetd:/etc/xinetd.d/chal:ro
+    ports:
+      - "10001:10001"

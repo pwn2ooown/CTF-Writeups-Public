@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reseter.css/2.0.0/reseter.min.css"
+        integrity="sha512-gCJkkUMGTe73+FMwog6gIBCVJIMXRoc21l6/IPCuzxCex/1sxvO8ctb6Zd4/WWs2UMqmtnDrAdhJht5pEY0LXg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        html {
+            height: 100%;
+            background: #ECF0F3;
+        }
+
+        * {
+            font-family: 'Montserrat', sans-serif;
+            color: #9fa8da;
+            letter-spacing: .05rem;
+        }
+
+        .border-boxes {}
+
+        .box {
+            display: block;
+            width: 80%;
+            max-width: 900px;
+            margin: 20vh auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 100;
+        }
+
+        textarea {
+            -webkit-tap-highlight-color: transparent;
+            width: 100%;
+            min-height: 12rem;
+            font-size: 1rem;
+            line-height: 2rem;
+            font-weight: 300;
+            background: #FFFFFF;
+            border: none;
+            border-radius: 1rem;
+            outline: none;
+            box-shadow:
+                18px 18px 30px #D1D9E9,
+                -18px -18px 30px #FFFFFF;
+            transition: ease .2s;
+            cursor: pointer;
+            max-width: 100%;
+            padding: .5rem 1rem;
+            resize: none;
+        }
+
+        .input-area {
+            position: relative;
+            max-width: 100%;
+        }
+
+        textarea::placeholder {
+            color: #9fa8da;
+        }
+
+        textarea:focus {
+            min-height: 12rem;
+            box-shadow:
+                inset 18px 18px 30px #D1D9E9,
+                inset -18px -18px 30px #FFFFFF;
+        }
+
+        /* Chrome/Opera/Safari */
+        ::-webkit-input-placeholder {
+            color: transparent;
+        }
+
+        /* Firefox 19+ */
+        ::-moz-placeholder {
+            color: transparent;
+        }
+
+        /* IE 10+ */
+        :-ms-input-placeholder {
+            color: transparent;
+        }
+
+        /* Firefox 18- */
+        :-moz-placeholder {
+            color: transparent;
+        }
+
+        textarea:placeholder-shown {
+            background: none;
+        }
+
+        .submit-btn {
+            align-self: flex-end;
+            background-color: #9fa8da;
+            color: white;
+            border: none;
+            border-radius: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            transition: ease .2s;
+            font-size: 1rem;
+            right: 0;
+            position: relative;
+            margin: .5rem 0;
+        }
+
+        .operations {
+            display: flex;
+            position: relative;
+            align-items: center;
+            gap: 1rem;
+            justify-content: right;
+        }
+
+        .submit-btn:hover {
+            background-color: #7986CB;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        select {
+            background-color: #888;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border-radius: 1rem;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            margin: .5rem 0;
+            cursor: pointer;
+            transition: ease .2s;
+        }
+
+        select:focus {
+            outline: none;
+        }
+
+        option {
+            background-color: #4D80E6;
+            color: white;
+        }
+
+        select option:checked {
+            background-color: #4D80E6;
+        }
+
+        select option[value="asciidoc"] {
+            width: 130px;
+        }
+
+        select option[value="markdown"] {
+            width: 155px;
+        }
+
+        select option[value="latex"] {
+            width: 95px;
+        }
+
+        select:hover,
+        select:focus {
+            background-color: #666;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .submit-btn:active {
+            background-color: #5e699e;
+        }
+    </style>
+    <title>MarkToFiles</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.slim.min.js"
+        integrity="sha512-fYjSocDD6ctuQ1QGIo9+Nn9Oc4mfau2IiE8Ki1FyMV4OcESUt81FMqmhsZe9zWZ6g6NdczrEMAos1GlLLAipWg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+    <div class="box">
+        <h1>Write your markdown here!</h1>
+        <div>
+            <div class="input-area">
+                <textarea name="comment" id="comment" placeholder="Type something..."></textarea>
+            </div>
+
+            <span class="operations">
+                <select name="options" id="options">
+                    <option value="asciidoc">asciidoc</option>
+                    <option value="markdown">markdown</option>
+                    <option value="latex">latex</option>
+                </select>
+                <button id="submitBtn" type="submit" class="submit-btn">Submit</button>
+            </span>
+        </div>
+    </div>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:100,300&display=swap" rel="stylesheet">
+</body>
+
+<script>
+    const selectBox = $('#options');
+
+    const adjustSelectBoxWidth = () => {
+        const selectedOptionWidth = selectBox.find(':selected').width();
+        selectBox.css('width', selectedOptionWidth);
+    }
+
+    selectBox.on('change', (e) => {
+        adjustSelectBoxWidth();
+    });
+
+    (() => {
+        adjustSelectBoxWidth();
+    })()
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const comment = document.getElementById('comment').value;
+        const options = document.getElementById('options').value;
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/generate');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.responseType = 'blob';
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                // console.log(xhr.responseText);
+                const blob = new Blob([xhr.response], { type: xhr.getResponseHeader('Content-Type') });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = xhr.getResponseHeader('Content-disposition').split('filename=')[1].replace(/"/g, '');
+                a.click();
+                URL.revokeObjectURL(url);
+            } else {
+                console.error(xhr.statusText);
+            }
+        };
+        xhr.onerror = function () {
+            console.error(xhr.statusText);
+        };
+        xhr.send(JSON.stringify({ comment: comment, options: options }));
+    });
+</script>
+
+</html>%                                                                                                                                          

@@ -1,0 +1,3 @@
+https://gchq.github.io/CyberChef/#recipe=SUB(%7B'option':'Hex','string':'1'%7D)&input=VUlKVC5KVC5aUFZTLkdNQkg
+
+FLAG{???}

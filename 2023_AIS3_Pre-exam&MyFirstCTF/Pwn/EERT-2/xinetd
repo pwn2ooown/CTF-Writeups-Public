@@ -1,0 +1,13 @@
+service eert
+{
+    disable = no
+    type = UNLISTED
+    socket_type = stream
+    protocol = tcp
+    server = /home/eert/run.sh
+    user = eert
+    port = 31337
+    flags = REUSE
+    bind = 0.0.0.0
+    wait = no
+}

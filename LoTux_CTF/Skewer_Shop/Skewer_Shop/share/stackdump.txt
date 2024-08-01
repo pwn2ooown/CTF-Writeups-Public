@@ -1,0 +1,12 @@
+pwndbg> stack 32
+00:0000│ esp 0xffffcee8 ◂— 0x0
+01:0004│     0xffffceec —▸ 0xffffcef4 ◂— 0x61616161 ('aaaa')
+02:0008│     0xffffcef0 ◂— 0x20 /* ' ' */
+03:000c│ ecx 0xffffcef4 ◂— 0x61616161 ('aaaa')
+04:0010│     0xffffcef8 ◂— 0x61616162 ('baaa')
+05:0014│     0xffffcefc ◂— 0x61616163 ('caaa')
+06:0018│     0xffffcf00 ◂— 0x61616164 ('daaa')
+07:001c│     0xffffcf04 ◂— 0x61616165 ('eaaa')
+08:0020│ ebp 0xffffcf08 ◂— 0x61616166 ('faaa')
+09:0024│     0xffffcf0c ◂— 0x61616167 ('gaaa')
+0a:0028│     0xffffcf10 ◂— 0x61616168 ('haaa')
