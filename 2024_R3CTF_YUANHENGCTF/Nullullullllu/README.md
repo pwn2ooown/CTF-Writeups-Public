@@ -1,0 +1,1 @@
+[Writeup](https://pwn2ooown.github.io/ctf/writeup/2024/06/10/r3ctf2024-NULL.html)
