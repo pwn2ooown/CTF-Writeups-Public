@@ -61,23 +61,24 @@ add() #4
 add() #5 (not needed XD)
 '''
 How to leak: (The chunk id are different from the exploit)
+First we have the following heap layout:
 Chunk 0
 Chunk 1 (Chunk 0 off by one so size is 0xc1)
 Chunk 2
 
-Free Chunk 1
+1. Free Chunk 1
 Chunk 0
 Unsorted bin 0xc1 (Overlap with Chunk 2)
 Chunk 2
 
-Allocate chunk 3
+2. Allocate chunk 3
 Chunk 0
 Chunk 3
-Chunk 2 / Unsorted bin 0x61 (This chunk is both chunk 2 and unsorted bin, which contains libc address)
+Chunk 2 / Unsorted bin 0x61 (This chunk is both chunk 2 and freed unsorted bin, which contains libc address)
 
-Print Chunk 2 -> Libc Leak
+3. Print Chunk 2 -> Libc Leak
 
-Heap leak is similar, create overlap chunk and put that chunk into fastbin list.
+Heap leak is similar, create overlap chunk and put that chunk into fastbin
 '''
 edit(0,b'A'*0x58+b'\xc1')
 remove(1)
@@ -99,7 +100,8 @@ Notice that in normal house of orange is to do unsorted bin attack on 0x60 chunk
 Then it'll overwrite IO_list_all to main_arena+88, and if you treat main_arena+88 as a FILE structure
 The _chain (next pointer) will point to the 0x60 small bin, so we also need to control a 0x60 small bin
 However due to my testing I cannot get a 0x60 small bin in this challenge (Or maybe we can? I haven't digged into it)
-But I found another thing is that if we do an unsorted bin attack on 0xc0, when it tries to FSOP there's actually a 0xc0 small bin
+But I found another thing is that if we do an unsorted bin attack on size 0xc0,
+when it tries to abort and FSOP there's actually a 0xc0 small bin, thus we can create a controlled size small bin
 After using gdb I found that (main_arena+88)->chain->chain is pointing to small bin 0xb0
 (Which is the third FILE structure of FSOP chain, the original house of orange is controlling the second FILE structure)
 And that's it, the rest is the same as original house of orange.
