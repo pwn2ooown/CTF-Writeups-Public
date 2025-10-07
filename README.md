@@ -1,8 +1,8 @@
 # CTF Writeups
 
-Writeup and solve scripts. Mostly pwn.
+Just some Writeup and solve scripts of mine. (Mostly pwn.)
 
-Some older write ups of mine were written long long ago so they may be awful.(?)
+Some older writeups were written long long ago so they might be awful.(?)
 
 ## License
 

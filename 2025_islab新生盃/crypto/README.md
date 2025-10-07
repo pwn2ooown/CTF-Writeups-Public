@@ -309,7 +309,7 @@ if __name__ == "__main__":
 
 `heymrsalt` is the Vigenère key
 
-```
+```text
 The Unbreakable Code: The Age of the Vigenère Cipher
 
 For centuries, the art of cryptography was a constant battle between concealment and revelation. Since the era of Julius Caesar, simple substitution ciphers dominated the world of secret messages. In these systems, a letter was consistently replaced by another, a simple trick that created a facade of security. However, by the 9th century, brilliant minds in the Arab world had perfected frequency analysis, a method of counting letter occurrences to systematically break these codes. For hundreds of years, code makers could only create puzzles that, with enough time and intellect, codebreakers could invariably solve. Secrecy was fragile and temporary.
