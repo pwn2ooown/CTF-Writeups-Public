@@ -1,3 +1,5 @@
+## UPDATE: Since basically everyone is SLOPPING in CTFs and I'm retired from CTFs. So there won't be any updates here
+
 # CTF Writeups
 
 Just some Writeup and solve scripts of mine. (Mostly pwn.)
